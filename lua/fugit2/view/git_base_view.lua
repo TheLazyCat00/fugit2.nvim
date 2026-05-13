@@ -64,13 +64,19 @@ end
 ---@param action Fugit2IndexAction
 function GitStatusDiffBase:_index_add_reset_discard_all(action)
   local tree = self._views.files
+  local bufnr = vim.api.nvim_get_current_buf()
+  local line_count = vim.api.nvim_buf_line_count(bufnr)
   local nodes
 
-  local node, _ = tree.tree:get_node(1)
-  node:expand()
-  nodes = iterators.iter(get_leaves(tree.tree, node))
+  nodes = iterators.range(1, line_count, 1):map(function(linenr)
+    return tree.tree:get_node(linenr)
+  end)
 
-  self:_stage_change_post(nodes, action)
+  nodes = nodes:filter(function(node)
+    return not node:has_children()
+  end)
+
+  self:_stage_change_post(iterators.iter(nodes), action)
 end
 
 ---@param action Fugit2IndexAction
