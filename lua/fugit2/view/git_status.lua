@@ -2951,23 +2951,30 @@ function GitStatus:setup_handlers()
     end
   end, map_options)
 
+  file_tree:map(
+	"n",
+	"a",
+	utils.wrap(GitStatus._index_add_reset_discard_all, self, TreeBase.IndexAction.ADD_RESET),
+	map_options
+)
+
   --- Space/[-]: Add or remove index
   file_tree:map(
     "n",
     { "-", "<space>" },
-    self:_index_add_reset_handler(false, TreeBase.IndexAction.ADD_RESET),
+    utils.wrap(GitStatus._index_add_reset_discard, self, TreeBase.IndexAction.ADD_RESET),
     map_options
   )
 
   --- [s]: stage file
-  file_tree:map("n", "s", self:_index_add_reset_handler(false, TreeBase.IndexAction.ADD), map_options)
+  file_tree:map("n", "s", utils.wrap(GitStatus._index_add_reset_discard, self, TreeBase.IndexAction.ADD), map_options)
 
   --- [u]: unstage file
-  file_tree:map("n", "u", self:_index_add_reset_handler(false, TreeBase.IndexAction.RESET), map_options)
+  file_tree:map("n", "u", utils.wrap(GitStatus._index_add_reset_discard, self, TreeBase.IndexAction.RESET), map_options)
 
   --- [D]/[x]: discard file changes
   -- file_tree:map("n", {"D", "x"}, self:index_add_reset_handler(false, false, false, true), map_options)
-  self._prompts.discard_confirm:on_yes(self:_index_add_reset_handler(false, TreeBase.IndexAction.DISCARD))
+  self._prompts.discard_confirm:on_yes(utils.wrap(GitStatus._index_add_reset_discard, self, TreeBase.IndexAction.DISCARD))
   file_tree:map("n", { "D", "x" }, function()
     local node = file_tree.tree:get_node()
     if node then
@@ -2984,15 +2991,15 @@ function GitStatus:setup_handlers()
   file_tree:map(
     "v",
     { "-", "<space>" },
-    self:_index_add_reset_handler(true, TreeBase.IndexAction.ADD_RESET),
+    utils.wrap(GitStatus._index_add_reset_discard_visual, self, TreeBase.IndexAction.ADD_RESET),
     map_options
   )
 
   --- Visual [s]: stage files in range
-  file_tree:map("v", "s", self:_index_add_reset_handler(true, TreeBase.IndexAction.ADD), map_options)
+  file_tree:map("v", "s", utils.wrap(GitStatus._index_add_reset_discard_visual, self, TreeBase.IndexAction.ADD), map_options)
 
   --- Visual [u]: unstage files in range
-  file_tree:map("v", "u", self:_index_add_reset_handler(true, TreeBase.IndexAction.RESET), map_options)
+  file_tree:map("v", "u", utils.wrap(GitStatus._index_add_reset_discard_visual, self, TreeBase.IndexAction.RESET), map_options)
 
   --- Visual [x][d]: discard files in range
   file_tree:map("v", { "x", "d" }, function()
