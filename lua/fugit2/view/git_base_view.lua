@@ -85,6 +85,9 @@ function GitStatusDiffBase:_index_add_reset_discard(action)
   local nodes
 
   local node, _ = tree.tree:get_node()
+  if node == nil then
+    return
+  end
 
   if not node:has_children() then
     nodes = iterators.iter { node }
