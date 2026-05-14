@@ -2957,11 +2957,11 @@ function GitStatus:setup_handlers()
   end, map_options)
 
   file_tree:map(
-	"n",
-	"a",
-	utils.wrap(GitStatus._index_add_reset_discard_all, self, TreeBase.IndexAction.ADD_RESET),
-	map_options
-)
+    "n",
+    "a",
+    utils.wrap(GitStatus._index_add_reset_discard_all, self, TreeBase.IndexAction.ADD_RESET),
+    map_options
+  )
 
   --- Space/[-]: Add or remove index
   file_tree:map(
